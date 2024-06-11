@@ -49,7 +49,7 @@
             break
 
             case "www.vg.no":
-				var targets = document.querySelectorAll('.article-content [class*="df-img-skin-pluss"], a [data-test-tag="plus-content-indicator"], .article-content [alt*="VG+"]')
+				var targets = document.querySelectorAll('.article[data-paywall=true]')
                 for (var i = 0; i < targets.length; i++) {
                     elements.push(closest(targets[i], ".article-content"))
                     count++
