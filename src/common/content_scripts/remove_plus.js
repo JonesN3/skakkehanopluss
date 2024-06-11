@@ -49,12 +49,8 @@
             break
 
             case "www.vg.no":
-				var targets = document.querySelectorAll('.article[data-paywall=true]')
-                for (var i = 0; i < targets.length; i++) {
-                    elements.push(closest(targets[i], ".article-content"))
-                    count++
-                }
-
+			    elements = document.querySelectorAll('.article[data-paywall=true]')
+                count = elements.length
             break
 
             case "www.ta.no": // amedia lokal
