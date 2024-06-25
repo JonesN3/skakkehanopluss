@@ -1,15 +1,4 @@
 (function ($) {
-
-    function saveVerboseOption (state) {
-        browser.storage.sync.set({'verbose': state}, function () {
-<<<<<<< HEAD
-            notifyChange("Lagret endringer.")
-=======
-            notifyState()
->>>>>>> 524478e3894f18f108dad03713ab980b67252a5c
-        })
-    }
-
     function notifyState (message, style) {
         message = message || "Lagret endringer."
         style = style || false
@@ -59,27 +48,14 @@
     }
 
     $(document).ready(function () {
-<<<<<<< HEAD
-        var inputs = {'verbose': $('#verbose')}
-
-        browser.storage.onChanged.addListener((changes, namespaces) => {
-            for (var key in changes) {
-                var browser.storageChange = changes[key]
-                for (var input in inputs) {
-                    var el = inputs[input]
-                    if (key == input) {
-                        el.prop('checked', browser.storageChange)
-                    }
-=======
         var verboseCheckbox = $("#verbose")
         var bigRedButton = $("#big-red-button")
-        var storagePromise = browser.storage.sync.get()
         var buttonStrings = {
             'unblock': "Jæ har pluss på denna sia.",
             'block': "Jæ vi'kke ha no' pluss her lenger!",
         }
 
-        browser.storage.onChanged.addListener((changes, namespaces) => {
+        browser.storage.onChanged.addListener((changes) => {
             for (key in changes) {
                 if (key === "verbose") {
                     verboseCheckbox.prop('checked', changes[key])
@@ -92,30 +68,23 @@
                         var host = getHostFromURL(tab.url)
                         console.log(host)
                     })
->>>>>>> 524478e3894f18f108dad03713ab980b67252a5c
-                }
-            }
-        });
-        
-        storagePromise.then(function (storageItems) => {
-            for (itemKey in storageItems) { // dette kommer sikkert til å bli tregt
-                if (itemKey === 'verbose') {
-                    verboseCheckbox.prop('checked', storageItems['verbose'])
-                } else {
-                    browser.tabs.query({ // spesielt pga dette
-                        active: true,
-                        currentWindow: true,
-                    }, function (tabs) {
-                        var tab = tabs[0]
-                        var host = getHostFromURL(tab.url)
-
-                        if (itemKey === host) {
-
-                        }
-                    })
                 }
             }
         })
+
+        browser.storage.sync.get()
+            .then((items) => {
+                for (var item in items) {
+                    if (item === 'verbose') {
+                        verboseCheckbox.prop('checked', items[item])
+                    } else {
+                        browser.tabs.query({
+                            active: true,
+                            currentWindow: true,
+                        })
+                    }
+                }
+            });
 
         for (var input in inputs) {
             var el = inputs[input]
@@ -124,11 +93,11 @@
             })
         }
 
-        verboseCheckbox.click((evt) => {
+        verboseCheckbox.click(() => {
             toggleOption('verbose')
         })
 
-        bigRedButton.click((evt) => {
+        bigRedButton.click(() => {
             toggleOption(window.host)
         })
     })
