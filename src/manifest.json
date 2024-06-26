@@ -6,6 +6,13 @@
   "author": "Espen Jones",
   "version": "1.0.0",
 
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "vikkehanopluss@example.com",
+      "strict_min_version": "100.0"
+    }
+  },
+
   "icons": {
     "16": "assets/icon16.png",
     "48": "assets/icon48.png",

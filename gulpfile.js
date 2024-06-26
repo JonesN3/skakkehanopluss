@@ -1,51 +1,25 @@
-const gulp = require('gulp');
-const gulp_zip = require('gulp-zip');
-const pconf = require('./package.json');
+import { series, src, dest } from 'gulp';
+import zip from 'gulp-zip';
 
-const conf = {
-  firefox: {
-    build: 'build/firefox/',
-    debug: 'debug/firefox/',
-  },
-  chrome: {
-    build: 'build/chrome/',
-    debug: 'debug/chrome/',
-  }
-};
-
-// snakk om quick'n'dirty shit
-
-function chromeDebug() {
-  return gulp.src(['src/chrome/**', 'src/common/**', 'src/manifest.json'])
-    .pipe(gulp.dest(conf.chrome.debug));
-}
-function chromeBuild() {
-  return gulp.src(['src/chrome/**', 'src/common/**', 'src/manifest.json'])
-    .pipe(gulp.dest(conf.chrome.build + 'tmp'))
-    .pipe(gulp_zip('chrome-' + pconf.version + '.zip'))
-    .pipe(gulp.dest(conf.chrome.build));
+function bundleFirefox() {
+    return src('src/common/**/*.js')
+        .pipe(src('src/firefox/**/*.js'))
+        .pipe(src('src/manifest.json'))
+        .pipe(src('src/common/**/*.png', { encoding: false }))
+        .pipe(dest('dist/firefox'))
+        .pipe(zip('firefox.zip'))
+        .pipe(dest('dist'))
 }
 
-function firefoxDebug() {
-  return gulp.src(['src/firefox/**', 'src/common/**', 'src/manifest.json'])
-    .pipe(gulp.dest(conf.firefox.debug));
-}
-function firefoxBuild() {
-  return gulp.src(['src/firefox/**', 'src/common/**', 'src/manifest.json'])
-    .pipe(gulp.dest(conf.firefox.build + 'tmp'))
-    .pipe(gulp_zip('firefox-' + pconf.version + '.zip'))
-    .pipe(gulp.dest(conf.firefox.build));
-}
-
-function debugWatch() {
-  gulp.watch('src/**', gulp.series(chromeDebug, firefoxDebug));
+function bundleChrome() {
+    return src('src/common/**/*.js')
+        .pipe(src('src/chrome/**/*.js'))
+        .pipe(src('src/manifest.json'))
+        .pipe(src('src/common/**/*.png', { encoding: false }))
+        .pipe(dest('dist/chrome'))
+        .pipe(zip('chrome.zip'))
+        .pipe(dest('dist'))
 }
 
-const build = gulp.parallel(chromeBuild, firefoxBuild);
-const debug = gulp.parallel(chromeDebug, firefoxDebug);
-const watch = gulp.series(debug, debugWatch);
-
-exports.build = build;
-exports.debug = debug;
-exports.watch = watch;
-exports.default = build;
+const def = series(bundleFirefox, bundleChrome);
+export default def
